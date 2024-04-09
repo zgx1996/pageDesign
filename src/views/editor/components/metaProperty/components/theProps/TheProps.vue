@@ -39,7 +39,7 @@ export default {
           }
         })
         this.activeComponent.props = props
-        this.$store.commit("replaceOneComponentInstance", this.activeComponent)
+        this.$store.commit("updateOneComponentInstance", this.activeComponent)
       }
     },
     watch: {

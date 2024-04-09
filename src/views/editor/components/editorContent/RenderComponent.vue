@@ -17,9 +17,9 @@
     "
     @dragover.native.stop="handleComponentDragOver($event)"
   >
-    <slot
+    <template
       v-for="slotName in Object.keys(componentInstance.slots)"
-      :name="slotName"
+      :slot="slotName"
     >
       <RenderComponent
         v-for="slotObj in componentInstance.slots[slotName]"
@@ -28,7 +28,7 @@
         :activeComponentInstance="activeComponentInstance"
         :componentInstanceList="componentInstance.slots[slotName]"
       ></RenderComponent>
-    </slot>
+    </template>
   </component>
   <div
     v-else-if="componentInstance.componentName === 'Div'"
@@ -41,9 +41,9 @@
         componentInstance.componentId == activeComponentInstance?.componentId,
     }"
   >
-    <slot
+    <template
       v-for="slotName in Object.keys(componentInstance.slots)"
-      :name="slotName"
+      :slot="slotName"
     >
       <RenderComponent
         v-for="slotObj in componentInstance.slots[slotName]"
@@ -52,7 +52,7 @@
         :activeComponentInstance="activeComponentInstance"
         :componentInstanceList="componentInstance.slots[slotName]"
       ></RenderComponent>
-    </slot>
+    </template>
   </div>
   <span
     v-else-if="componentInstance.componentName === 'Span'"
@@ -65,9 +65,9 @@
         componentInstance.componentId == activeComponentInstance?.componentId,
     }"
   >
-    <slot
+    <template
       v-for="slotName in Object.keys(componentInstance.slots)"
-      :name="slotName"
+      :slot="slotName"
     >
       <RenderComponent
         v-for="slotObj in componentInstance.slots[slotName]"
@@ -76,7 +76,7 @@
         :activeComponentInstance="activeComponentInstance"
         :componentInstanceList="componentInstance.slots[slotName]"
       ></RenderComponent>
-    </slot>
+    </template>
   </span>
   <span v-else-if="componentInstance.componentName === 'Text'">
     {{ componentInstance.props.textContent }}

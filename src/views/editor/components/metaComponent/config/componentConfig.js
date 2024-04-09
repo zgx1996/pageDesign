@@ -189,6 +189,26 @@ const elementUIComponentType = {
         metaInfo: {
           label: '文本标签'
         }
+      },
+      Ul: {
+        props:{
+        },
+        style: {
+          height: '200px'
+        },
+        metaInfo: {
+          label: '列表'
+        }
+      },
+      Li: {
+        props:{
+        },
+        style: {
+          height: '200px'
+        },
+        metaInfo: {
+          label: '列表项'
+        }
       }
     },
     category: 'html'
@@ -243,8 +263,8 @@ const elementUIComponentType = {
         },
         style: {
           width: '100%',
-          height: '30px',
         },
+        
         metaInfo: {
           label: '导航子菜单'
         }

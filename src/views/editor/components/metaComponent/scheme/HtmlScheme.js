@@ -36,4 +36,30 @@ const Text = {
     }
 }
 
-export default { Div, Span, Text }
+const Ul = {
+	propsConfig: {
+		className: {
+			label: '类名',
+			type: PROPS_TYPES.stringArray,
+		},
+	},
+    slots: {
+        default: []
+    },
+}
+
+const Li = {
+	propsConfig: {
+		className: {
+			label: '类名',
+			type: PROPS_TYPES.stringArray,
+		},
+	},
+    slots: {
+        default: []
+    }
+}
+
+
+
+export default { Div, Span, Text, Ul, Li }

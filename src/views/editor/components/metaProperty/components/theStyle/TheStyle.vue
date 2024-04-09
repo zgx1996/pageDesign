@@ -65,9 +65,11 @@ export default {
       monaco.editor.setModelLanguage(this.fileEditor.getModel(), this.getLanguage(this.fileType))
     },
     updateStyle() {
-      console.log("this.editor", this.editor)
+      console.log("this.fileEditor", this.fileEditor)
       const value = this.fileEditor.getValue()
+      console.log("value", value)
       this.activeComponent.style = JSON.parse(value)
+      this.$store.commit('updateOneComponentInstance', this.activeComponent)
     }
   },
   watch: {

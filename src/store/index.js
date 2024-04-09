@@ -39,7 +39,7 @@ export default new Vuex.Store({
       console.log("cloneDeep(componentInstanceList)", cloneDeep(componentInstanceList))
       state.componentInstanceList = componentInstanceList
     },
-    replaceOneComponentInstance(state, componentInstance) {
+    updateOneComponentInstance(state, componentInstance) {
       forEachComponentInstanceList(state.componentInstanceList, (item, index, parentList) => {
         if(item.componentId === componentInstance.componentId) {
           parentList.splice(index, 1, componentInstance)
