@@ -5,7 +5,6 @@ const componentCategory = {
   'normal': '常用',
   'layout': '布局',
   'form': '表单',
- 
 }
 
 const elementUIComponentType = {
@@ -194,7 +193,8 @@ const elementUIComponentType = {
         props:{
         },
         style: {
-          height: '200px'
+          width: '100%',
+          height: '200px',
         },
         metaInfo: {
           label: '列表'
@@ -204,6 +204,7 @@ const elementUIComponentType = {
         props:{
         },
         style: {
+          width: '100%',
           height: '200px'
         },
         metaInfo: {
@@ -234,14 +235,19 @@ const elementUIComponentType = {
   Navigation: {
     components: {
       ElTabs: {
-        props: {},
+        props: {
+          value: 'code1'
+        },
         style: {height: '400px'},
         metaInfo: {
           label:'标签页'
         }
       },
       ElTabPane: {
-        props: {},
+        props: {
+          name: 'code1',
+          label: '选项卡1'
+        },
         style: {height: '400px'},
         metaInfo: {
           label:'选项卡'
@@ -264,7 +270,7 @@ const elementUIComponentType = {
         style: {
           width: '100%',
         },
-        
+
         metaInfo: {
           label: '导航子菜单'
         }
