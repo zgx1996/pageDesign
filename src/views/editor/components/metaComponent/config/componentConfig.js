@@ -1,9 +1,11 @@
-const componentCategory = {
+const componentCategory = { 
+  'html': '原生',
+  'navigation': '导航',
   'data': '数据',
   'normal': '常用',
   'layout': '布局',
   'form': '表单',
-  'html': '原生',
+ 
 }
 
 const elementUIComponentType = {
@@ -161,11 +163,31 @@ const elementUIComponentType = {
   Html: {
     components: {
       Div: {
+        props:{
+        },
         style: {
           height: '200px'
         },
         metaInfo: {
           label: 'Div标签'
+        }
+      },
+      Span: {
+        props:{
+        },
+        style: {
+        },
+        metaInfo: {
+          label: 'span标签'
+        }
+      },
+      Text: {
+        props:{
+        },
+        style: {
+        },
+        metaInfo: {
+          label: '文本标签'
         }
       }
     },
@@ -185,9 +207,67 @@ const elementUIComponentType = {
         metaInfo: {
           label:'表格列'
         }
-      }
+      },
     },
     category: 'data'
+  },
+  Navigation: {
+    components: {
+      ElTabs: {
+        props: {},
+        style: {height: '400px'},
+        metaInfo: {
+          label:'标签页'
+        }
+      },
+      ElTabPane: {
+        props: {},
+        style: {height: '400px'},
+        metaInfo: {
+          label:'选项卡'
+        }
+      },
+      ElMenu: {
+        props: {
+        },
+        style: {
+          width: '300px',
+          height: '100%',
+        },
+        metaInfo: {
+          label: '导航菜单'
+        }
+      },
+      ElSubmenu: {
+        props: {
+        },
+        style: {
+          width: '100%',
+          height: '30px',
+        },
+        metaInfo: {
+          label: '导航子菜单'
+        }
+      },
+      ElMenuItem: {
+        props: {
+        },
+        style: {
+        },
+        metaInfo: {
+          label: '导航菜单项'
+        }
+      },
+      ElMenuItemGroup: {
+        props: {
+          title: '默认分组标题'
+        },
+        metaInfo: {
+          label: '导航菜单项组'
+        }
+      }
+    },
+    category: 'navigation'
   }
 }
 

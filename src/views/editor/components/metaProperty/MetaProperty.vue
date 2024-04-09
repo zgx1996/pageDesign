@@ -37,5 +37,16 @@ export default {
 </script>
   
 <style lang="less">
-
+.meta-property{
+  height: 100%;
+  .el-tabs{
+    height: 100%;
+    .el-tabs__content{
+      height: calc(100% - 40px);
+      .el-tab-pane{
+        height: 100%;
+      }
+    }
+  }
+}
 </style>

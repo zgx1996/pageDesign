@@ -12,6 +12,7 @@
     "core-js": "^3.8.3",
     "element-ui": "^2.15.14",
     "lodash": "^4.17.21",
+    "monaco-editor": "^0.47.0",
     "nanoid": "^5.0.5",
     "splitpanes": "^2.4.1",
     "v-contextmenu": "^2.9.2",
@@ -23,12 +24,14 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@babel/plugin-transform-class-static-block": "^7.24.1",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-vuex": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "less": "^4.0.0",
     "less-loader": "^8.0.0",
+    "monaco-editor-webpack-plugin": "^7.1.0",
     "vue-template-compiler": "^2.6.14"
   }
 }

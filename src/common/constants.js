@@ -7,7 +7,8 @@ const PROPS_TYPES = {
     objectArray: 'objectArray',
     function: 'function',
     boolean: 'boolean',
-    enum: 'enum'
+    enum: 'enum',
+    color: 'color'
 }
 
 export { PROPS_TYPES }

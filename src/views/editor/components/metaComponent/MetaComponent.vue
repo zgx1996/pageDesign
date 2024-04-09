@@ -5,7 +5,7 @@
         <component-panel :metaComponentData="categoryComponent"></component-panel>
       </el-tab-pane>
       <el-tab-pane label="已部署组件树" name="componentTree">
-        <component-tree :componentInstanceList="componentInstanceList" @moveNode="onMoveNode" @nodeClick="onComponentInstanceNodeClick" @deleteComponentInstance="onDeleteComponentInstance"></component-tree>
+        <component-tree @moveNode="onMoveNode" @nodeClick="onComponentInstanceNodeClick" @deleteComponentInstance="onDeleteComponentInstance"></component-tree>
       </el-tab-pane>
     </el-tabs>
   </div>

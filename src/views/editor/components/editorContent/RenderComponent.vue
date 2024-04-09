@@ -7,12 +7,15 @@
     v-bind="componentInstance.props"
     :data-id="componentInstance.componentId"
     class="component-common-style"
-    :class="{ isActive: componentInstance.componentId == activeComponentInstance?.componentId }"
+    :class="{
+      isActive:
+        componentInstance.componentId == activeComponentInstance?.componentId,
+    }"
     :style="componentInstance.style"
-    @drop.native="handleComponentDrop($event, componentInstance)"
-    @dragover.native.prevent="
-      handleComponentDragOver($event, componentInstance)
+    @dragenter.native.stop="
+      handleComponentDragEnter($event, componentInstance)
     "
+    @dragover.native.stop="handleComponentDragOver($event)"
   >
     <slot
       v-for="slotName in Object.keys(componentInstance.slots)"
@@ -27,8 +30,17 @@
       ></RenderComponent>
     </slot>
   </component>
-  <div v-else-if="componentInstance.componentName === 'Div'" :id="componentInstance.componentId"  :data-id="componentInstance.componentId"
-    :style="componentInstance.style" @drop="handleComponentDrop($event, componentInstance)">
+  <div
+    v-else-if="componentInstance.componentName === 'Div'"
+    :id="componentInstance.componentId"
+    :data-id="componentInstance.componentId"
+    :style="componentInstance.style"
+    class="component-common-style"
+    :class="{
+      isActive:
+        componentInstance.componentId == activeComponentInstance?.componentId,
+    }"
+  >
     <slot
       v-for="slotName in Object.keys(componentInstance.slots)"
       :name="slotName"
@@ -42,13 +54,40 @@
       ></RenderComponent>
     </slot>
   </div>
+  <span
+    v-else-if="componentInstance.componentName === 'Span'"
+    :id="componentInstance.componentId"
+    :data-id="componentInstance.componentId"
+    :style="componentInstance.style"
+    class="component-common-style"
+    :class="{
+      isActive:
+        componentInstance.componentId == activeComponentInstance?.componentId,
+    }"
+  >
+    <slot
+      v-for="slotName in Object.keys(componentInstance.slots)"
+      :name="slotName"
+    >
+      <RenderComponent
+        v-for="slotObj in componentInstance.slots[slotName]"
+        :key="slotObj.componentId"
+        :componentInstance="slotObj"
+        :activeComponentInstance="activeComponentInstance"
+        :componentInstanceList="componentInstance.slots[slotName]"
+      ></RenderComponent>
+    </slot>
+  </span>
+  <span v-else-if="componentInstance.componentName === 'Text'">
+    {{ componentInstance.props.textContent }}
+  </span>
 </template>
 
 <script>
 import * as scheme from "@/views/editor/components/metaComponent/scheme/Scheme.js";
-import 'element-ui/lib/theme-chalk/index.css'
+import "element-ui/lib/theme-chalk/index.css";
 import { nanoid } from "nanoid";
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from "lodash";
 export default {
   name: "RenderComponent",
   props: {
@@ -58,7 +97,7 @@ export default {
     },
     activeComponentInstance: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     componentInstanceList: {
       type: Array,
@@ -67,26 +106,30 @@ export default {
   },
   data() {
     return {
-      test: ''
-    }
+      test: "",
+    };
   },
-  computed: {
-    
-  },
+  computed: {},
   methods: {
-    handleComponentDrop(event, targetComponent, slotName = 'default') {
-      const maskDiv = document.getElementById('slotMask')
-      console.log("handleComponentDrophandleComponentDrophandleComponentDrop", maskDiv)
-      debugger
-      if(maskDiv) {
-        maskDiv.parentElement.removeChild(maskDiv)
+    handleComponentDrop(event, targetComponent, slotName = "default") {
+      const maskDiv = document.getElementById("slotMask");
+      if (maskDiv) {
+        maskDiv.parentElement.removeChild(maskDiv);
       }
       const componentStr = event.dataTransfer.getData("component");
+      console.log("handleComponentDrop", componentStr)
       const sourceComponent = JSON.parse(componentStr);
       const { metaInfo, props } = sourceComponent;
       const componentName = metaInfo.__componentName;
+      if(targetComponent.allowSubComponent && targetComponent.allowSubComponent[slotName]) {
+        const allowSubComponentList = targetComponent.allowSubComponent[slotName]
+        if(allowSubComponentList && !allowSubComponentList.includes(componentName)) {
+          return
+        }
+      }
       const componentScheme = scheme[componentName];
-      const componentId = nanoid()
+      const componentSchemeClone = cloneDeep(componentScheme)
+      const componentId = nanoid();
       const slotObj = {
         componentId,
         componentName: componentName,
@@ -94,72 +137,106 @@ export default {
         style: cloneDeep(sourceComponent.style),
         props: cloneDeep(sourceComponent.props),
         class: [],
-        slots: cloneDeep(componentScheme.slots),
-        propsConfig: cloneDeep(componentScheme.propsConfig),
+        ...componentSchemeClone
       };
-      if( targetComponent.slots[slotName]) {
-        targetComponent.slots[slotName] = []
+      if (!targetComponent.slots[slotName]) {
+        targetComponent.slots[slotName] = [];
       }
       targetComponent.slots[slotName].push(slotObj);
       this.$nextTick(() => {
-        const divElement = document.getElementById(componentId)
-        slotObj._dom = divElement
-      })
+        const divElement = document.getElementById(componentId);
+        slotObj._dom = divElement;
+      });
       event.stopPropagation();
-      console.log("componentInstanceList", cloneDeep(this.componentInstanceList));
     },
-    handleComponentDragOver(event, targetComponent) {
-      // 创建slot的遮罩m
-      console.log("TODO 创建slot遮罩", targetComponent)
-      debugger
-      if(targetComponent._dom) {
-        const maskDiv = document.getElementById('slotMask')
-        if(maskDiv) {
-          maskDiv.parentElement.removeChild(maskDiv)
+    handleComponentDragOver(event) {
+      event.stopPropagation()
+    },
+    handleComponentDragEnter(event, targetComponent) {
+      const componentStr = event.dataTransfer.getData("component");
+      console.log('xxxxx', componentStr)
+      if (targetComponent._dom) {
+        const maskDiv = document.getElementById("slotMask");
+        if (maskDiv) {
+          maskDiv.parentElement.removeChild(maskDiv);
         }
-        const { top, left, width, height } = targetComponent._dom.getBoundingClientRect()
-        const divElement = document.createElement('div')
-        divElement.id = 'slotMask'
-        divElement.style.position = 'fixed'
-        divElement.style.left = left + 'px'
-        divElement.style.top = top + 'px'
-        divElement.style.width = width + 'px'
-        divElement.style.height = height + 'px'
-        divElement.style.display = 'flex'
-        Object.keys(targetComponent.slots).forEach(slotName=>{
-          const slotDiv = document.createElement('div')
-          slotDiv.style.flex = 1
-          slotDiv.style.display = 'flex'
-          slotDiv.style.justifyContent = 'center'
-          slotDiv.style.alignItems = 'center'
-          slotDiv.style.border = '1px dashed gray'
-          slotDiv.addEventListener("dragover", (event) => {
+        const { top, left, width, height } =
+          targetComponent._dom.getBoundingClientRect();
+        const divElement = document.createElement("div");
+        divElement.id = "slotMask";
+        divElement.style.position = "fixed";
+        divElement.style.left = left + "px";
+        divElement.style.top = top + "px";
+        divElement.style.width = width + "px";
+        divElement.style.height = height + "px";
+        divElement.style.display = "flex";
+        Object.keys(targetComponent.slots).forEach((slotName) => {
+          const slotDiv = document.createElement("div");
+          slotDiv.style.flex = 1;
+          slotDiv.style.height = '100%';
+          slotDiv.style.display = "flex";
+          slotDiv.style.justifyContent = "center";
+          slotDiv.style.alignItems = "center";
+          slotDiv.style.border = "1px dashed gray";
+          slotDiv.addEventListener("dragenter", (dragEnterEvent) => {
+            if(targetComponent.allowSubComponent && targetComponent.allowSubComponent[slotName]) {
+              const allowSubComponentList = targetComponent.allowSubComponent[slotName]
+              const componentStr = dragEnterEvent.dataTransfer.getData("component");
+              console.log("componentStr", componentStr)
+              if(componentStr) {
+                const sourceComponent = JSON.parse(componentStr);
+                const { metaInfo, props } = sourceComponent;
+                const componentName = metaInfo.__componentName;
+                if(allowSubComponentList && !allowSubComponentList.includes(componentName)) {
+                  slotDiv.style.cursor = 'not-allowed'
+                }
+              }
+            }
             // 阻止默认行为以允许放置
-            event.preventDefault();
+            dragEnterEvent.preventDefault();
           });
-          slotDiv.addEventListener('drop', (event) => {
-            this.handleComponentDrop(event, targetComponent, slotName)
-            const componentStr = event.dataTransfer.getData("component");
-            console.log('sourceComponentsourceComponent', componentStr)
-            const sourceComponent = JSON.parse(componentStr);
-          })
-          const spanElement = document.createElement('span')
-          spanElement.textContent = slotName
-          slotDiv.appendChild(spanElement)
-          divElement.appendChild(slotDiv)
+          slotDiv.addEventListener("dragover", (dragOverEvent) => {
+            if(targetComponent.allowSubComponent && targetComponent.allowSubComponent[slotName]) {
+              const allowSubComponentList = targetComponent.allowSubComponent[slotName]
+              const componentStr = dragOverEvent.dataTransfer.getData("component");
+              console.log("componentStr", componentStr)
+              if(componentStr) {
+                const sourceComponent = JSON.parse(componentStr);
+                const { metaInfo, props } = sourceComponent;
+                const componentName = metaInfo.__componentName;
+                if(allowSubComponentList && !allowSubComponentList.includes(componentName)) {
+                  slotDiv.style.cursor = 'not-allowed'
+                }
+              }
+            }
+            // 阻止默认行为以允许放置
+            dragOverEvent.preventDefault();
+          });
+          slotDiv.addEventListener("drop", (dropEvent) => {
+            this.handleComponentDrop(dropEvent, targetComponent, slotName);
+          });
+          slotDiv.textContent = slotName;
+          divElement.appendChild(slotDiv);
+        });
+        divElement.addEventListener('dragleave', (event) => {
+          // 移除掉该 dom 节点
+          if (divElement) {
+            divElement.parentElement?.removeChild(divElement);
+          }
         })
-        document.body.appendChild(divElement)
+        document.body.appendChild(divElement);
       }
+      event.stopPropagation();
     },
   },
 };
 </script>
 
 <style scoped lang="less">
-.component-common-style{
-  border: 2px dashed gray
+.component-common-style {
+  border: 2px dashed gray;
 }
-.isActive{
+.isActive {
   border-color: blue;
 }
 </style>

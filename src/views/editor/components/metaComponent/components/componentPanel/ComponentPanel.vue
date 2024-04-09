@@ -3,7 +3,8 @@
     <el-input placeholder="搜索" prefix-icon="el-icon-search" v-model="searchKey" size="mini">
       <i slot="suffix" class="el-input__icon el-icon-s-grid"></i>
     </el-input>
-    <el-collapse v-model="activeNames">
+    <div class="collapse-wrapper">
+      <el-collapse v-model="activeNames">
       <el-collapse-item :title="componentCategory" :name="componentCategory" :key="componentCategory" v-for="componentCategory in Object.keys(metaComponentData)">
         <el-row>
           <el-col :span="12" v-for="(component, index) in metaComponentData[componentCategory]" :key="index">
@@ -16,6 +17,8 @@
         </el-row>
       </el-collapse-item>
     </el-collapse>
+    </div>
+    
   </div>
 </template>
 
@@ -44,6 +47,7 @@ export default {
 
 <style lang="less">
 .component-panel {
+  height: 100%;
   .el-card{
     cursor: pointer;
   }

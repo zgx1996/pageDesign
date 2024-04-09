@@ -12,4 +12,28 @@ const Div = {
     }
 }
 
-export default { Div }
+const Span = {
+	propsConfig: {
+		className: {
+			label: '类名',
+			type: PROPS_TYPES.stringArray,
+		},
+	},
+    slots: {
+        default: []
+    }
+}
+
+const Text = {
+	propsConfig: {
+		textContent: {
+			label: '内容',
+			type: PROPS_TYPES.string
+		}
+	},
+    slots: {
+        default: null
+    }
+}
+
+export default { Div, Span, Text }

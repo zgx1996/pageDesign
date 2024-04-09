@@ -11,13 +11,14 @@
 
 <script>
 import { nanoid } from 'nanoid';
+import { mapState } from 'vuex';
+import { groupBy, cloneDeep } from 'lodash'
 export default {
   name: "ComponentTree",
-  props: {
-    componentInstanceList: {
-      type: Array,
-      default: () => []
-    }
+  computed: {
+    ...mapState({
+      componentInstanceList: 'componentInstanceList'
+    })
   },
   data() {
     return {
@@ -40,39 +41,44 @@ export default {
     },
     makeTreeData() {
       let treeData = []
-      this.componentInstanceList.forEach(item => {
+      const _componentInstanceList =  cloneDeep(this.componentInstanceList)
+      _componentInstanceList.forEach(item => {
         treeData.push(item)
         if(item.slots) {
           item.children = []
           Object.keys(item.slots).forEach(slotName => {
-            const slotNode = { componentId: nanoid(), code: slotName, label: `${slotName}(插槽)`, children: [], _type: 'slot', _parent: item  }
             const slots = item.slots[slotName]
-            slotNode.children.push(...slots)
-            item.children.push(slotNode)
-            slots.forEach(slot => {
-              slot._parent = slotNode
-              slot._belongSlot = slotName
-              this.makeTreeData2(slot)
-            })
+            if(Array.isArray(slots)) {
+              const slotNode = { componentId: nanoid(), code: slotName, label: `${slotName}(插槽)`, children: [], _type: 'slot', _parent: item  }
+              slotNode.children.push(...slots)
+              item.children.push(slotNode)
+              slots.forEach(slot => {
+                slot._parent = slotNode
+                slot._belongSlot = slotName
+                this.makeTreeData2(slot)
+              })
+            }
           })
         }
       })
       this.componentInstanceTree = treeData
-      console.log("this.componentInstanceTree", this.componentInstanceTree)
     },
     makeTreeData2(item) {
       if(item.slots) {
           item.children = []
           Object.keys(item.slots).forEach(slotName => {
-            const slotNode = { componentId: nanoid(), code: slotName, label: `${slotName}(插槽)`, children: [], _type: 'slot',  _parent: item }
-            const slots = item.slots[slotName]
-            slotNode.children.push(...slots)
-            item.children.push(slotNode)
-            slots.forEach(slot => {
-              slot._parent = slotNode
-              slot._belongSlot = slotName
-              this.makeTreeData2(slot)
-            })
+             const slots = item.slots[slotName]
+            if(Array.isArray(slots)) {
+              const slotNode = { componentId: nanoid(), code: slotName, label: `${slotName}(插槽)`, children: [], _type: 'slot',  _parent: item }
+              slotNode.children.push(...slots)
+              item.children.push(slotNode)
+              slots.forEach(slot => {
+                slot._parent = slotNode
+                slot._belongSlot = slotName
+                this.makeTreeData2(slot)
+              })
+            }
+            
           })
         }
     },
@@ -86,6 +92,7 @@ export default {
   watch: {
     componentInstanceList: {
       handler: function() {
+        console.log("监听到 componentInstanceList 变化", this.componentInstanceList)
         this.makeTreeData()
       },
       deep: true

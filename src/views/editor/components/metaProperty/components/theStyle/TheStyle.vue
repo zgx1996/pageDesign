@@ -17,18 +17,14 @@
         <textarea type="textarea" ref="styleRef" v-model="styleStr"></textarea>
       </el-collapse-item>
     </el-collapse> -->
-    <textarea type="textarea" ref="styleRef"></textarea>
-    <el-button @click="updateStyle">确定</el-button>
+    <div id="styleEdit" type="textarea" ref="styleRef"></div>
+    <el-button @click="updateStyle" size="small" type="primary">确定</el-button>
   </div>
 </template>
 
 <script>
-import CodeMirror from 'codemirror';
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/mode/css/css.js'
-import 'codemirror/addon/hint/show-hint.css'
-import 'codemirror/addon/hint/show-hint.js'
-import 'codemirror/addon/hint/css-hint.js'
+import * as monaco from 'monaco-editor';
+import 'monaco-editor/esm/vs/language/css/monaco.contribution'
 export default {
   name: 'TheStyle',
   props: {
@@ -38,6 +34,7 @@ export default {
     }
   },
   data() {
+    this.fileEditor = null
     return {
       activeNames: ['className', 'style'],
       style: {},
@@ -45,27 +42,31 @@ export default {
     }
   },
   mounted() {
-    const editor = CodeMirror.fromTextArea(this.$refs.styleRef, {
-      lineNumbers: true,
-      mode: 'text/css',
-      theme: "base16-light", // 主题样式
-      lint: true,
-      tabSize: 2,
-      lineWrapping: true, // 自动换行
-            matchBrackets: true, // 括号匹配显示
-            autoCloseBrackets: true, // 输入和退格时成对  
-    });
-    this.editor = editor
-    editor.on('cursorActivity',() => {
-      editor.showHint()
-    })
-
   },
   methods: {
+    createEditor() {
+      if(this.fileEditor) {
+        return
+      }
+      const dom = document.getElementById("styleEdit")
+      if(!dom) {
+        return
+      }
+      const fileEditor = monaco.editor.create(dom, {
+        language: 'json',
+        foldingStrategy: 'indentation',
+        automaticLayout: true, // 自动布局
+        folding: true, // 是否启用代码折叠
+        theme: 'vs-dark'
+      })
+      this.fileEditor = fileEditor
+    },
+    changeLanguage() {
+      monaco.editor.setModelLanguage(this.fileEditor.getModel(), this.getLanguage(this.fileType))
+    },
     updateStyle() {
       console.log("this.editor", this.editor)
-      const value = this.editor.getValue()
-      console.log('value', value)
+      const value = this.fileEditor.getValue()
       this.activeComponent.style = JSON.parse(value)
     }
   },
@@ -73,12 +74,21 @@ export default {
     activeComponent() {
       this.style = this.activeComponent.style || {}
       const styleStr = JSON.stringify(this.style||{})
-      this.editor.setValue(styleStr)
+      if(!this.fileEditor) {
+        this.createEditor()
+      }
+      this.fileEditor.setValue(styleStr)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.the-style{
+  height: 100%;
+  #styleEdit{
+    height: calc(100% - 60px);
+  }
+}
 
 </style>

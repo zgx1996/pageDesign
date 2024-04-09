@@ -35,11 +35,11 @@ export default {
         const props = cloneDeep(this.props)
         Object.keys(props).forEach(key => {
           if(this.propsConfig[key].type === PROPS_TYPES.objectArray) {
-            debugger
             props[key] = JSON.parse(props[key])
           }
         })
         this.activeComponent.props = props
+        this.$store.commit("replaceOneComponentInstance", this.activeComponent)
       }
     },
     watch: {
@@ -48,7 +48,6 @@ export default {
         const props = cloneDeep(this.activeComponent.props || {})
         Object.keys(props).forEach(key => {
           if(this.propsConfig[key].type === PROPS_TYPES.objectArray) {
-            debugger
             props[key] = JSON.stringify(props[key])
           }
         })
