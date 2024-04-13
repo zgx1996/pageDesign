@@ -193,7 +193,6 @@ const elementUIComponentType = {
         props:{
         },
         style: {
-          width: '100%',
           height: '200px',
         },
         metaInfo: {
@@ -204,8 +203,6 @@ const elementUIComponentType = {
         props:{
         },
         style: {
-          width: '100%',
-          height: '200px'
         },
         metaInfo: {
           label: '列表项'
@@ -290,6 +287,35 @@ const elementUIComponentType = {
         },
         metaInfo: {
           label: '导航菜单项组'
+        }
+      },
+      ElDropdown: {
+        props: {
+          tabIndex: 0
+        },
+        style: {
+          width: '300px',
+        },
+        metaInfo: {
+          label: '下拉菜单'
+        }
+      },
+      ElDropdownMenu: {
+        props: {
+        },
+        style: {
+        },
+        metaInfo: {
+          label: '下拉菜单按钮'
+        }
+      },
+      ElDropdownItem: {
+        props: {
+        },
+        style: {
+        },
+        metaInfo: {
+          label: '下拉菜单项'
         }
       }
     },

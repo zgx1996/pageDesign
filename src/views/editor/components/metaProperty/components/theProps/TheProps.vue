@@ -47,7 +47,7 @@ export default {
         this.propsConfig = cloneDeep(this.activeComponent.propsConfig || {})
         const props = cloneDeep(this.activeComponent.props || {})
         Object.keys(props).forEach(key => {
-          if(this.propsConfig[key].type === PROPS_TYPES.objectArray) {
+          if(this.propsConfig[key]?.type === PROPS_TYPES.objectArray) {
             props[key] = JSON.stringify(props[key])
           }
         })

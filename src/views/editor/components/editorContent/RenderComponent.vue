@@ -1,7 +1,7 @@
 <template>
   <component
     v-model="componentInstance.props.value"
-    v-if="componentInstance.componentName.startsWith('El')"
+    v-if="componentInstance.componentName?.startsWith('El')"
     :is="componentInstance.componentName"
     :id="componentInstance.componentId"
     v-bind="componentInstance.props"
@@ -52,66 +52,19 @@
       </template>
     </template>
   </component>
-  <div
-    v-else-if="componentInstance.componentName === 'Div'"
-    :id="componentInstance.componentId"
-    :data-id="componentInstance.componentId"
-    :style="componentInstance.style"
-    class="component-common-style"
-    :class="{
-      isActive:
-        componentInstance.componentId == activeComponentInstance?.componentId,
-    }"
-  >
-    <template
-      v-for="slotName in Object.keys(componentInstance.slots)"
-      :slot="slotName"
-    >
-      <RenderComponent
-        v-for="slotObj in componentInstance.slots[slotName]"
-        :key="slotObj.componentId"
-        :componentInstance="slotObj"
-        :activeComponentInstance="activeComponentInstance"
-        :componentInstanceList="componentInstance.slots[slotName]"
-      ></RenderComponent>
-    </template>
-  </div>
-  <span
-    v-else-if="componentInstance.componentName === 'Span'"
-    :id="componentInstance.componentId"
-    :data-id="componentInstance.componentId"
-    :style="componentInstance.style"
-    class="component-common-style"
-    :class="{
-      isActive:
-        componentInstance.componentId == activeComponentInstance?.componentId,
-    }"
-  >
-    <template
-      v-for="slotName in Object.keys(componentInstance.slots)"
-      :slot="slotName"
-    >
-      <RenderComponent
-        v-for="slotObj in componentInstance.slots[slotName]"
-        :key="slotObj.componentId"
-        :componentInstance="slotObj"
-        :activeComponentInstance="activeComponentInstance"
-        :componentInstanceList="componentInstance.slots[slotName]"
-      ></RenderComponent>
-    </template>
-  </span>
-  <span v-else-if="componentInstance.componentName === 'Text'">
-    {{ componentInstance.props.textContent }}
-  </span>
+  <HtmlNodeRenderComponent v-else :componentInstance="componentInstance" :activeComponentInstance="activeComponentInstance" :componentInstanceList="componentInstanceList"
+    @dragenter.native.stop="handleComponentDragEnter($event, componentInstance)"
+    @dragover.native.stop="handleComponentDragOver($event)"></HtmlNodeRenderComponent>
 </template>
 
 <script>
 import * as scheme from "@/views/editor/components/metaComponent/scheme/Scheme.js";
-import "element-ui/lib/theme-chalk/index.css";
 import { nanoid } from "nanoid";
 import { cloneDeep } from "lodash";
+import HtmlNodeRenderComponent from './HtmlNodeRenderComponent'
 export default {
   name: "RenderComponent",
+  components: { HtmlNodeRenderComponent },
   props: {
     componentInstance: {
       type: Object,
@@ -128,12 +81,12 @@ export default {
   },
   data() {
     return {
-      test: "",
     };
   },
   computed: {},
   methods: {
     handleComponentDrop(event, targetComponent, slotName = "default") {
+      debugger
       const maskDiv = document.getElementById("slotMask");
       if (maskDiv) {
         maskDiv.parentElement.removeChild(maskDiv);
@@ -175,6 +128,7 @@ export default {
       this.$nextTick(() => {
         const divElement = document.getElementById(componentId);
         slotObj._dom = divElement;
+        this.$store.commit('updateOneComponentInstance', targetComponent)
       });
       event.stopPropagation();
     },
@@ -183,7 +137,6 @@ export default {
     },
     handleComponentDragEnter(event, targetComponent) {
       const componentStr = event.dataTransfer.getData("component");
-      console.log("xxxxx", componentStr);
       if (targetComponent._dom) {
         const maskDiv = document.getElementById("slotMask");
         if (maskDiv) {

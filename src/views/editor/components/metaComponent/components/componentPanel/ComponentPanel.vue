@@ -7,10 +7,10 @@
       <el-collapse v-model="activeNames">
       <el-collapse-item :title="componentCategory" :name="componentCategory" :key="componentCategory" v-for="componentCategory in Object.keys(metaComponentData)">
         <el-row>
-          <el-col :span="12" v-for="(component, index) in metaComponentData[componentCategory]" :key="index">
+          <el-col :span="6" v-for="(component, index) in metaComponentData[componentCategory]" :key="index">
             <el-card draggable @dragstart.native="handleDragStart($event, component)">
               <div>
-                {{ component.metaInfo.label }}
+                {{ component.metaInfo.__componentName || component.metaInfo.label }}
               </div>
             </el-card>
           </el-col>
